@@ -113,14 +113,10 @@ func deleteTodo(c *gin.Context) {
 // @BasePath /
 // @query.collection.format multi
 func main() {
-	// configure the Gin server
 	router := gin.Default()
 	router.GET("/todo", getAllTodos)
-
 	router.POST("/todo", createTodo)
-
-	//choose delete from postman
-	router.POST("/todo", deleteTodo)
+	router.DELETE("/todo", deleteTodo)
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// run the Gin server
