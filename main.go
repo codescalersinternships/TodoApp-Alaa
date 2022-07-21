@@ -31,7 +31,7 @@ var todoList = []todo{
 // @Produce json
 // @Success 200 {object} todo
 // @Router /todo [get]
-func getAllTodos(c *gin.Context) {
+func GetAllTodos(c *gin.Context) {
 	c.JSON(http.StatusOK, todoList)
 }
 
@@ -42,7 +42,7 @@ func getAllTodos(c *gin.Context) {
 // @Success 200 {object} todo
 // @Failure 404 {object} message
 // @Router /todo/{id} [get]
-func getTodoByID(c *gin.Context) {
+func GetTodoByID(c *gin.Context) {
 	ID := c.Param("id")
 
 	for _, todo := range todoList {
@@ -63,7 +63,7 @@ func getTodoByID(c *gin.Context) {
 // @Success 200 {object} todo
 // @Failure 400 {object} message
 // @Router /todo [post]
-func createTodo(c *gin.Context) {
+func CreateTodo(c *gin.Context) {
 	var newTodo todo
 
 	if err := c.BindJSON(&newTodo); err != nil {
@@ -83,7 +83,7 @@ func createTodo(c *gin.Context) {
 // @Success 200 {object} todo
 // @Failure 404 {object} message
 // @Router /todo/{id} [delete]
-func deleteTodo(c *gin.Context) {
+func DeleteTodo(c *gin.Context) {
 	ID := c.Param("id")
 	for index, todo := range todoList {
 		if todo.ID == ID {
@@ -114,9 +114,9 @@ func deleteTodo(c *gin.Context) {
 // @query.collection.format multi
 func main() {
 	router := gin.Default()
-	router.GET("/todo", getAllTodos)
-	router.POST("/todo", createTodo)
-	router.DELETE("/todo", deleteTodo)
+	router.GET("/gettodos", GetAllTodos)
+	router.POST("/createtodo", CreateTodo)
+	router.DELETE("/deletetodo/:id", DeleteTodo)
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// run the Gin server
