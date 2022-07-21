@@ -116,6 +116,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/gettodos", GetAllTodos)
 	router.POST("/createtodo", CreateTodo)
+	router.GET("/gettodoid/:id", GetTodoByID)
 	router.DELETE("/deletetodo/:id", DeleteTodo)
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
