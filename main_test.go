@@ -19,7 +19,7 @@ func SetUpRouter() *gin.Engine {
 
 func TestCreateTodo(t *testing.T) {
 	r := SetUpRouter()
-	r.POST("/createtodo", CreateTodo)
+	r.POST("/todo/create", CreateTodo)
 	id := xid.New().String()
 	newTodo := todo{
 		ID:   id,
@@ -27,7 +27,7 @@ func TestCreateTodo(t *testing.T) {
 	}
 
 	jsonValue, _ := json.Marshal(newTodo)
-	req, _ := http.NewRequest("POST", "/createtodo", bytes.NewBuffer((jsonValue)))
+	req, _ := http.NewRequest("POST", "/todo/create", bytes.NewBuffer((jsonValue)))
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusCreated, w.Code)
@@ -35,8 +35,8 @@ func TestCreateTodo(t *testing.T) {
 
 func TestGetAllTodos(t *testing.T) {
 	r := SetUpRouter()
-	r.GET("/gettodos", GetAllTodos)
-	req, _ := http.NewRequest("GET", "/gettodos", nil)
+	r.GET("/todo/get", GetAllTodos)
+	req, _ := http.NewRequest("GET", "/todo/get", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
