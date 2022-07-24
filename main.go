@@ -114,6 +114,9 @@ func DeleteTodo(c *gin.Context) {
 // @query.collection.format multi
 func main() {
 	router := gin.Default()
+
+	router.LoadHTMLFiles("./tempaltes", ".html")
+
 	router.GET("/todo", GetAllTodos)
 	router.POST("/todo", CreateTodo)
 	router.GET("/todo/:id", GetTodoByID)
