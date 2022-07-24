@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "MySQL",
+            "database": "${workspaceFolder:TodoApp-Alaa}/test.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

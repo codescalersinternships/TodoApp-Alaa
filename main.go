@@ -1,29 +1,36 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	_ "swag-gin-demo/docs"
+	"swag-gin-demo/model"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-type todo struct {
-	ID   string `json:"id"`
-	Task string `json:"task"`
-}
-
 type message struct {
 	Message string `json:"message"`
 }
 
-var todoList = []todo{
-	{"1", "Restful Api Server"},
-	{"2", "Docker Image"},
-	{"3", "Tests"},
-	{"4", "Postman"},
-	{"5", "Github actions"},
+// var todoList = []todo{
+// 	{"1", "Restful Api Server"},
+// 	{"2", "Docker Image"},
+// 	{"3", "Tests"},
+// 	{"4", "Postman"},
+// 	{"5", "Github actions"},
+// }
+
+type NewList struct {
+	ID   string `json:"id" binding"required"`
+	Task string `json:"task" binding:"required"`
+}
+
+type ListUpdate struct {
+	ID   string `json:"id"`
+	Task string `json:"task"`
 }
 
 // @Summary get all items in the todo list
@@ -32,7 +39,18 @@ var todoList = []todo{
 // @Success 200 {object} todo
 // @Router /todo [get]
 func GetAllTodos(c *gin.Context) {
-	c.JSON(http.StatusOK, todoList)
+	var lists []model.List
+	db, err := model.Database()
+	if err != nil {
+		log.Println(err)
+	}
+
+	if err := db.Find(&lists).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"Error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, lists)
+
 }
 
 // @Summary get a todo item by ID
@@ -43,17 +61,19 @@ func GetAllTodos(c *gin.Context) {
 // @Failure 404 {object} message
 // @Router /todo/{id} [get]
 func GetTodoByID(c *gin.Context) {
-	ID := c.Param("id")
 
-	for _, todo := range todoList {
-		if todo.ID == ID {
-			c.JSON(http.StatusOK, todo)
-			return
-		}
+	var list model.List
+	db, err := model.Database()
+	if err != nil {
+		log.Println(err)
 	}
 
-	r := message{"Todo not Found!!"}
-	c.JSON(http.StatusNotFound, r)
+	if err := db.Where("id= ?", c.Param("id")).First(&list).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "ID not Found!! "})
+		return
+	}
+	c.JSON(http.StatusOK, list)
 }
 
 // @Summary add a new item to the todo list
@@ -64,16 +84,29 @@ func GetTodoByID(c *gin.Context) {
 // @Failure 400 {object} message
 // @Router /todo [post]
 func CreateTodo(c *gin.Context) {
-	var newTodo todo
+	var list NewList
 
-	if err := c.BindJSON(&newTodo); err != nil {
-		r := message{"Error!! Can't Create TodoList "}
-		c.JSON(http.StatusBadRequest, r)
+	if err := c.ShouldBindJSON(&list); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
 		return
 	}
 
-	todoList = append(todoList, newTodo)
-	c.JSON(http.StatusCreated, newTodo)
+	newList := model.List{ID: list.ID, Task: list.Task}
+
+	db, err := model.Database()
+	if err != nil {
+		log.Println(err)
+	}
+
+	if err := db.Create(&newList).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, newList)
 }
 
 // @Summary delete a todo item by ID
@@ -84,18 +117,27 @@ func CreateTodo(c *gin.Context) {
 // @Failure 404 {object} message
 // @Router /todo/{id} [delete]
 func DeleteTodo(c *gin.Context) {
-	ID := c.Param("id")
-	for index, todo := range todoList {
-		if todo.ID == ID {
-			todoList = append(todoList[:index], todoList[index+1:]...)
-			r := message{"successfully deleted todo"}
-			c.JSON(http.StatusOK, r)
-			return
-		}
+	var list model.List
+	db, err := model.Database()
+	if err != nil {
+		log.Println(err)
 	}
 
-	r := message{"todo not found"}
-	c.JSON(http.StatusNotFound, r)
+	if err := db.Where("id = ?", c.Param("id")).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "ID not Found!!"})
+		return
+	}
+
+	if err := db.Delete(&list).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "List deleted"})
+
 }
 
 // @title Go + Gin Todo API
@@ -113,9 +155,14 @@ func DeleteTodo(c *gin.Context) {
 // @BasePath /
 // @query.collection.format multi
 func main() {
+	db, err := model.Database()
+	if err != nil {
+		log.Println(err)
+	}
+	db.DB()
 	router := gin.Default()
 
-	router.LoadHTMLFiles("./tempaltes", ".html")
+	//router.LoadHTMLFiles("./tempaltes", ".html")
 
 	router.GET("/todo", GetAllTodos)
 	router.POST("/todo", CreateTodo)
