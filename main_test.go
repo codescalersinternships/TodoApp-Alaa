@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"swag-gin-demo/model"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -16,13 +18,21 @@ func SetUpRouter() *gin.Engine {
 
 func TestCreateTodo(t *testing.T) {
 	r := SetUpRouter()
-	var json = []byte(`{"ID":"1", "Task":"read"}`)
-	request, _ := http.NewRequest("POST", "/todo", bytes.NewBuffer(json))
+	r.POST("/todo", CreateTodo)
+	new := model.List{
+		ID:   "1",
+		Task: "Github Actions",
+	}
+
+	jsonList, _ := json.Marshal(new)
+	req, _ := http.NewRequest(http.MethodPost, "/todo", bytes.NewBuffer(jsonList))
 	response := httptest.NewRecorder()
-	r.ServeHTTP(response, request)
+	r.ServeHTTP(response, req)
 	status := response.Code
+
 	if status != http.StatusOK {
 		t.Errorf("Returned Wrong status code: got %v want %v", status, http.StatusOK)
+
 	}
 
 }
@@ -42,11 +52,16 @@ func TestGetAllTodos(t *testing.T) {
 
 }
 
-// func TestGetTodoByID(t *testing.T) {
-// 	r := SetUpRouter()
-// 	r.GET("/gettodoid", GetTodoByID)
-// 	req, _ := http.NewRequest("GET", "/gettodoid", bytes.NewBuffer((jsonValue)))
-// 	w := httptest.NewRecorder()
-// 	r.ServeHTTP(w, req)
-// 	assert.Equal(t, http.StatusCreated, w.Code)
-// }
+func TestGetTodoByID(t *testing.T) {
+	r := SetUpRouter()
+	//r.GET("/todo/6", GetTodoByID)
+	request, _ := http.NewRequest(http.MethodPost, "/todo/6", nil)
+	response := httptest.NewRecorder()
+
+	r.ServeHTTP(response, request)
+	status := response.Code
+	if status != http.StatusOK {
+		t.Errorf("Returned Wrong status code: got %v want %v", status, http.StatusOK)
+
+	}
+}

@@ -158,12 +158,18 @@ func main() {
 	db.DB()
 	router := gin.Default()
 
-	//router.LoadHTMLFiles("./tempaltes", ".html")
+	router.LoadHTMLGlob("templates/*")
 
-	router.GET("/todo", GetAllTodos)
-	router.POST("/todo", CreateTodo)
-	router.GET("/todo/:id", GetTodoByID)
-	router.DELETE("/todo/:id", DeleteTodo)
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "page.html", gin.H{
+			"title": "Main website",
+		})
+	})
+
+	//router.GET("/todo", GetAllTodos)
+	// router.POST("/todo", CreateTodo)
+	// router.GET("/todo/:id", GetTodoByID)
+	// router.DELETE("/todo/:id", DeleteTodo)
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.Run()
