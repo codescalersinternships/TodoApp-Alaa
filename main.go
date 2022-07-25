@@ -150,7 +150,7 @@ func main() {
 	db.DB()
 	router := gin.Default()
 
-	router.LoadHTMLGlob("templates/*")
+	//router.LoadHTMLFiles("my-svelte-project/")
 
 	// router.GET("/", func(c *gin.Context) {
 	// 	c.HTML(http.StatusOK, "page.html", gin.H{
