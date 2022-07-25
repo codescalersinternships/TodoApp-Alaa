@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,21 +14,18 @@ func SetUpRouter() *gin.Engine {
 	return router
 }
 
-// func TestCreateTodo(t *testing.T) {
-// 	r := SetUpRouter()
-// 	r.POST("/todo", CreateTodo)
-// 	id := xid.New().String()
-// 	newTodo := todo{
-// 		ID:   id,
-// 		Task: "Read",
-// 	}
+func TestCreateTodo(t *testing.T) {
+	r := SetUpRouter()
+	var json = []byte(`{"ID":"1", "Task":"read"}`)
+	request, _ := http.NewRequest("POST", "/todo", bytes.NewBuffer(json))
+	response := httptest.NewRecorder()
+	r.ServeHTTP(response, request)
+	status := response.Code
+	if status != http.StatusOK {
+		t.Errorf("Returned Wrong status code: got %v want %v", status, http.StatusOK)
+	}
 
-// 	jsonValue, _ := json.Marshal(newTodo)
-// 	req, _ := http.NewRequest("POST", "/todo", bytes.NewBuffer((jsonValue)))
-// 	w := httptest.NewRecorder()
-// 	r.ServeHTTP(w, req)
-// 	assert.Equal(t, http.StatusCreated, w.Code)
-// }
+}
 
 func TestGetAllTodos(t *testing.T) {
 
