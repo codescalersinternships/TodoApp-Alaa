@@ -11,10 +11,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-type message struct {
-	Message string `json:"message"`
-}
-
 // var todoList = []todo{
 // 	{"1", "Restful Api Server"},
 // 	{"2", "Docker Image"},
@@ -49,7 +45,7 @@ func GetAllTodos(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"Error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, lists)
+	c.JSON(http.StatusOK, gin.H{"TodoList": lists})
 
 }
 

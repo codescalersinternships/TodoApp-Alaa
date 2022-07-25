@@ -1,6 +1,10 @@
 package main
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,18 +29,20 @@ func SetUpRouter() *gin.Engine {
 // 	assert.Equal(t, http.StatusCreated, w.Code)
 // }
 
-// func TestGetAllTodos(t *testing.T) {
-// 	r := SetUpRouter()
-// 	r.GET("/todo", GetAllTodos)
-// 	req, _ := http.NewRequest("GET", "/todo", nil)
-// 	w := httptest.NewRecorder()
-// 	r.ServeHTTP(w, req)
+func TestGetAllTodos(t *testing.T) {
 
-// 	var newTodo []todo
-// 	json.Unmarshal(w.Body.Bytes(), &newTodo)
-// 	assert.Equal(t, http.StatusOK, w.Code)
-// 	assert.NotEmpty(t, newTodo)
-// }
+	r := SetUpRouter()
+	r.GET("/todo", GetAllTodos)
+	req, _ := http.NewRequest("GET", "/todo", nil)
+	response := httptest.NewRecorder()
+	r.ServeHTTP(response, req)
+	status := response.Code
+
+	if status != http.StatusOK {
+		t.Errorf("Returned Wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+}
 
 // func TestGetTodoByID(t *testing.T) {
 // 	r := SetUpRouter()
