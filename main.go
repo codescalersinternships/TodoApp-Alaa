@@ -11,14 +11,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// var todoList = []todo{
-// 	{"1", "Restful Api Server"},
-// 	{"2", "Docker Image"},
-// 	{"3", "Tests"},
-// 	{"4", "Postman"},
-// 	{"5", "Github actions"},
-// }
-
 type NewList struct {
 	ID   string `json:"id" binding"required"`
 	Task string `json:"task" binding:"required"`
@@ -160,16 +152,16 @@ func main() {
 
 	router.LoadHTMLGlob("templates/*")
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "page.html", gin.H{
-			"title": "Main website",
-		})
-	})
+	// router.GET("/", func(c *gin.Context) {
+	// 	c.HTML(http.StatusOK, "page.html", gin.H{
+	// 		"title": "Main website",
+	// 	})
+	// })
 
-	//router.GET("/todo", GetAllTodos)
-	// router.POST("/todo", CreateTodo)
-	// router.GET("/todo/:id", GetTodoByID)
-	// router.DELETE("/todo/:id", DeleteTodo)
+	router.GET("/todo", GetAllTodos)
+	router.POST("/todo", CreateTodo)
+	router.GET("/todo/:id", GetTodoByID)
+	router.DELETE("/todo/:id", DeleteTodo)
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	router.Run()
