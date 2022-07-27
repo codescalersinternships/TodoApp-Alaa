@@ -20,4 +20,3 @@ CMD [ "swag-gin-demo" ]
 
 
 
-

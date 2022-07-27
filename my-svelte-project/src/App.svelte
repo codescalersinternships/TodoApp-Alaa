@@ -1,10 +1,19 @@
 <script>
+	import Modal from './Modal.svelte';
+	
+	async function get(){
+		const response = await fetch("/todo")
+		const data = await response.json()
+		console.log(data)
+	}
 
+	get()
 </script>
 
 <main>
-	<!-- <h2>Todo List</h2> -->
 
+	
+<Modal />
 </main>
 
 <style>
@@ -16,7 +25,7 @@
 	}
 
 	h2 {
-		color: #7c3183;
+		color: #000000;
 		text-transform: uppercase;
 		font-size: 3em;
 		font-weight: 100;
@@ -27,4 +36,6 @@
 			max-width: none;
 		}
 	}
+
+
 </style>

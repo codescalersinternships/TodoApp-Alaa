@@ -105,26 +105,34 @@ func CreateTodo(c *gin.Context) {
 // @Failure 404 {object} message
 // @Router /todo/{id} [delete]
 func DeleteTodo(c *gin.Context) {
-	var list model.List
-	db, err := model.Database()
-	if err != nil {
-		log.Println(err)
-	}
+	var deletedList model.List
 
-	if err := db.Where("id = ?", c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "ID not Found!!"})
+	if err := model.DB.Where("id = ?", c.Param("id")).First(&deletedList).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID not found"})
 		return
 	}
 
-	if err := db.Delete(&list).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error()})
-		return
-	}
+	model.DB.Delete(&deletedList)
+	c.JSON(http.StatusOK, gin.H{"task": true})
+	// db, err := model.Database()
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "List deleted"})
+	// if err := db.Where("id = ?", c.Param("id")).Error; err != nil {
+	// 	c.JSON(http.StatusNotFound, gin.H{
+	// 		"error": "ID not Found!!"})
+	// 	return
+	// }
+
+	// if err := db.Delete(&list).Error; err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": err.Error()})
+	// 	return
+	// }
+
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"message": "List deleted"})
 
 }
 
@@ -143,12 +151,15 @@ func DeleteTodo(c *gin.Context) {
 // @BasePath /
 // @query.collection.format multi
 func main() {
-	db, err := model.Database()
-	if err != nil {
-		log.Println(err)
-	}
-	db.DB()
 	router := gin.Default()
+	model.Database()
+
+	// db, err := model.Database()
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+
+	// db.DB()
 
 	//router.LoadHTMLFiles("my-svelte-project/")
 
