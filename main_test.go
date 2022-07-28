@@ -20,8 +20,8 @@ func SetUpRouter() *gin.Engine {
 func TestGetAllTodos(t *testing.T) {
 
 	r := SetUpRouter()
-	handler := Handler{}
-	r.GET("/todo", handler.GetAllTodos)
+	app := App{}
+	r.GET("/todo", app.GetAllTodos)
 	request, _ := http.NewRequest("Get", "/todo", nil)
 	response := httptest.NewRecorder()
 	r.ServeHTTP(response, request)
@@ -35,7 +35,7 @@ func TestGetAllTodos(t *testing.T) {
 
 func TestCreateTodo(t *testing.T) {
 	r := SetUpRouter()
-	handler := Handler{}
+	handler := App{}
 	r.POST("/todo", handler.CreateTodo)
 	new := model.TodoList{
 		ID:   "3",
@@ -56,7 +56,7 @@ func TestCreateTodo(t *testing.T) {
 
 func TestGetTodoByID(t *testing.T) {
 	r := SetUpRouter()
-	handler := Handler{}
+	handler := App{}
 	r.GET("/todo/1", handler.GetTodoByID)
 	request, _ := http.NewRequest(http.MethodPost, "/todo/1", nil)
 	response := httptest.NewRecorder()
@@ -71,7 +71,7 @@ func TestGetTodoByID(t *testing.T) {
 
 func TestDeleteTodo(t *testing.T) {
 	r := SetUpRouter()
-	handler := Handler{}
+	handler := App{}
 	r.GET("/todo/1", handler.DeleteTodo)
 	request := httptest.NewRequest(http.MethodPost, "/todo/1", nil)
 	response := httptest.NewRecorder()

@@ -1,54 +1,45 @@
 <script>
-  async function getList(){
-    try{
-      let response = await fetch("http://localhost:8080/todo");
-    let users = await response.json();
-    console.log(users)
+$:lists = []
+axios.get(`http://localhost:8080/todo`).then(res => {
+  lists = res.data;
+  this.setState({lists});
 
-    }catch(err){
-      console.error(err);
-    }
+})
 
+let task =""
 
-  }
+async function createTask(){
+  const res = await fetch('http://localhost:8080/todo`',{
+    method: 'POST',
+    body: JSON.stringify({
+      id : 4,
+      task,
+      done: false
+
+    })
+  })
+
+  const json = await res.json()
+  result = JSON.stringify(json)
+}
+
 
 </script>
-
-<!-- <script>
-  async function getUsers() {
-    let response = await fetch("https://api.mocki.io/v1/7ce1d76a");
-    let users = await response.json();
-    return users;
-  }
-  const promise = getUsers();
-</script> -->
-<!-- 
-<div>
-{#await promise}
-	<p>Loading...</p>
-{:then user}
-	{#each user as user}
-	<p>Name is {user.name}, ID: {user.id}</p>
-	{/each}
-{:catch error}
-	<p style="color: red">{error.message}</p>
-{/await}
-</div> -->
-
 
 <div clas ="backdrop">
     <dir class="modal">
         <div id="myDIV" class="header">
             <h2>My To Do List</h2>
             <input type="text" id="myInput" placeholder="Title...">
-            <span onclick="newElement()" class="addBtn">Add</span>
+            <button type="button" on:click={createTask}> Add</button>
           </div>
           
           <ul id="myUL">
-    
+           
+            {#each lists as list }
+          <li > {list.task}</li> 
+            {/each}
           </ul>
-    
-    
     </dir>
 
     <section>

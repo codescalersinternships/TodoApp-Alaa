@@ -1,13 +1,6 @@
 <script>
 	import Modal from './Modal.svelte';
 	
-	async function get(){
-		const response = await fetch("/todo")
-		const data = await response.json()
-		console.log(data)
-	}
-
-	get()
 </script>
 
 <main>

@@ -14,21 +14,28 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/gin-contrib/cors"
 	"gorm.io/gorm"
 )
 
-type Handler struct {
+type App struct {
 	db *gorm.DB
 }
 
-func newHandler(db *gorm.DB) *Handler {
-	return &Handler{db}
+func newApp(db *gorm.DB) *App {
+	return &App{db}
 }
 
-func (h *Handler) GetAllTodos(c *gin.Context) {
+type ErrorMsg struct {
+	Message string `json:"message"`
+}
+
+func (app *App) GetAllTodos(c *gin.Context) {
 	var lists []model.TodoList
 
-	if result := h.db.Find(&lists); result.Error != nil {
+	if result := app.db.Find(&lists); result.Error != nil {
+		r := ErrorMsg{"Error!!, Can't get all todos"}
+		c.JSON(http.StatusBadRequest, r)
 		return
 	}
 
@@ -36,14 +43,18 @@ func (h *Handler) GetAllTodos(c *gin.Context) {
 
 }
 
-func (h *Handler) CreateTodo(c *gin.Context) {
+func (app *App) CreateTodo(c *gin.Context) {
 	var list model.TodoList
 
 	if err := c.BindJSON(&list); err != nil {
+		r := ErrorMsg{"Error!!"}
+		c.JSON(http.StatusBadRequest, r)
 		return
 	}
 
-	if result := h.db.Create(&list); result.Error != nil {
+	if result := app.db.Create(&list); result.Error != nil {
+		r := ErrorMsg{"Error!!, Can't create data"}
+		c.JSON(http.StatusBadRequest, r)
 		return
 	}
 
@@ -51,11 +62,11 @@ func (h *Handler) CreateTodo(c *gin.Context) {
 
 }
 
-func (h *Handler) DeleteTodo(c *gin.Context) {
+func (app *App) DeleteTodo(c *gin.Context) {
 
 	id := c.Param("id")
 
-	if result := h.db.Delete(&model.TodoList{}, id); result.Error != nil {
+	if result := app.db.Delete(&model.TodoList{}, id); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"Error : ": result.Error.Error(),
 		})
@@ -67,9 +78,9 @@ func (h *Handler) DeleteTodo(c *gin.Context) {
 
 }
 
-func (h *Handler) GetTodoByID(c *gin.Context) {
+func (app *App) GetTodoByID(c *gin.Context) {
 	var list model.TodoList
-	if err := h.db.Where("id= ?", c.Param("id")).First(&list).Error; err != nil {
+	if err := app.db.Where("id= ?", c.Param("id")).First(&list).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"Error ": "ID Not Found !!"})
 		return
@@ -80,6 +91,13 @@ func (h *Handler) GetTodoByID(c *gin.Context) {
 
 func main() {
 	router := gin.New()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{"PUT", "PATCH", "GET", "POST", "DELETE"},
+		AllowHeaders:  []string{"content-type"},
+		ExposeHeaders: []string{"X-Total-Count"},
+	}))
+
 	db, err := model.ConnectDB()
 	if err != nil {
 		panic("Failed to connect to database !!")
@@ -98,15 +116,15 @@ func main() {
 	}()
 
 	log.Println("Server exiting")
-	handler := newHandler(db)
+	app := newApp(db)
 	router.Use(middleware.GinBodyMiddleware())
-	router.GET("/todo", handler.GetAllTodos)
+	router.GET("/todo", app.GetAllTodos)
 	router.Use(middleware.GinBodyMiddleware())
-	router.POST("/todo", handler.CreateTodo)
+	router.POST("/todo", app.CreateTodo)
 	router.Use(middleware.GinBodyMiddleware())
-	router.GET("/todo/:id", handler.GetTodoByID)
+	router.GET("/todo/:id", app.GetTodoByID)
 	router.Use(middleware.GinBodyMiddleware())
-	router.DELETE("/todo/:id", handler.DeleteTodo)
+	router.DELETE("/todo/:id", app.DeleteTodo)
 	//router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Wait for interrupt signal to gracefully shutdown the server with
