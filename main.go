@@ -1,9 +1,14 @@
 package main
 
 import (
+	"context"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	_ "swag-gin-demo/docs"
 	model "swag-gin-demo/models"
+	"time"
 
 	middleware "swag-gin-demo/middleware"
 
@@ -79,6 +84,19 @@ func main() {
 		panic("Failed to connect to database !!")
 	}
 
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+
+	go func() {
+		// service connections
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	log.Println("Server exiting")
 	handler := newHandler(db)
 	router.Use(middleware.GinBodyMiddleware())
 	router.GET("/todo", handler.GetAllTodos)
@@ -90,5 +108,16 @@ func main() {
 	router.DELETE("/todo/:id", handler.DeleteTodo)
 	//router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 5 seconds.
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Println("Shutdown Server ...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
+	}
 	router.Run()
 }
