@@ -5,6 +5,8 @@ import (
 	_ "swag-gin-demo/docs"
 	model "swag-gin-demo/models"
 
+	middleware "swag-gin-demo/middleware"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -78,9 +80,13 @@ func main() {
 	}
 
 	handler := newHandler(db)
+	router.Use(middleware.GinBodyMiddleware())
 	router.GET("/todo", handler.GetAllTodos)
+	router.Use(middleware.GinBodyMiddleware())
 	router.POST("/todo", handler.CreateTodo)
+	router.Use(middleware.GinBodyMiddleware())
 	router.GET("/todo/:id", handler.GetTodoByID)
+	router.Use(middleware.GinBodyMiddleware())
 	router.DELETE("/todo/:id", handler.DeleteTodo)
 	//router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
