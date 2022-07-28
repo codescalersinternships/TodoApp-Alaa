@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	_ "swag-gin-demo/docs"
+
 	model "swag-gin-demo/models"
 	"time"
 
 	middleware "swag-gin-demo/middleware"
 
 	"github.com/gin-gonic/gin"
+
 	"gorm.io/gorm"
 )
 

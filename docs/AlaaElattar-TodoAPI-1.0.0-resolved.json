@@ -1,0 +1,116 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample Petstore server.  You can find \nout more about Swagger at \n[http://swagger.io](http://swagger.io) or on \n[irc.freenode.net, #swagger](http://swagger.io/irc/).\n",
+    "version": "1.0.0",
+    "title": "Swagger Petstore",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "virtserver.swaggerhub.com",
+  "basePath": "/AlaaElattar/TodoAPI/1.0.0",
+  "tags": [
+    {
+      "name": "todo",
+      "description": "TodoList API",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/todo": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Return all todos",
+        "operationId": "GetAllTodos",
+        "parameters": [],
+        "responses": {
+          "402": {
+            "description": "All tasks in todo returned successfully."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Add task to todolist",
+        "operationId": "CreateTodo",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Created Successfully"
+          }
+        }
+      }
+    },
+    "/todo/{id}": {
+      "get": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "Return task by id",
+        "description": "Returns a single task from list",
+        "operationId": "GetTodoByID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of task",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully returned"
+          },
+          "500": {
+            "description": "Internal server Error, Id not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "todo"
+        ],
+        "summary": "delete task from list by ID",
+        "description": "delete task",
+        "operationId": "DeleteTodo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of task to be deleted",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully deleted"
+          },
+          "404": {
+            "description": "ID of task not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {}
+}
