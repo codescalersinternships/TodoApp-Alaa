@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"swag-gin-demo/model"
+	model "swag-gin-demo/models"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func SetUpRouter() *gin.Engine {
@@ -19,10 +20,11 @@ func SetUpRouter() *gin.Engine {
 func TestGetAllTodos(t *testing.T) {
 
 	r := SetUpRouter()
-	r.GET("/todo", GetAllTodos)
-	req, _ := http.NewRequest("GET", "/todo", nil)
+	handler := Handler{}
+	r.GET("/todo", handler.GetAllTodos)
+	request, _ := http.NewRequest("Get", "/todo", nil)
 	response := httptest.NewRecorder()
-	r.ServeHTTP(response, req)
+	r.ServeHTTP(response, request)
 	status := response.Code
 
 	if status != http.StatusOK {
@@ -33,9 +35,10 @@ func TestGetAllTodos(t *testing.T) {
 
 func TestCreateTodo(t *testing.T) {
 	r := SetUpRouter()
-	r.POST("/todo", CreateTodo)
-	new := model.List{
-		ID:   "1",
+	handler := Handler{}
+	r.POST("/todo", handler.CreateTodo)
+	new := model.TodoList{
+		ID:   "3",
 		Task: "Github Actions",
 	}
 	jsonList, _ := json.Marshal(new)
@@ -43,23 +46,19 @@ func TestCreateTodo(t *testing.T) {
 	response := httptest.NewRecorder()
 	r.ServeHTTP(response, req)
 	status := response.Body.String()
-	want := "{\"id\":1,\"task\":\"Github Actions\"}\n"
+	want := "{\"id\":3,\"task\":\"Github Actions\"}\n"
 
 	if status != want {
 		t.Errorf("Error!!. Expected %q, want %q", want, status)
 	}
 
-	// if status != http.StatusOK {
-	// 	t.Errorf("Returned Wrong status code: got %v want %v", status, http.StatusOK)
-
-	// }
-
 }
 
 func TestGetTodoByID(t *testing.T) {
 	r := SetUpRouter()
-	//r.GET("/todo/6", GetTodoByID)
-	request, _ := http.NewRequest(http.MethodPost, "/todo/6", nil)
+	handler := Handler{}
+	r.GET("/todo/1", handler.GetTodoByID)
+	request, _ := http.NewRequest(http.MethodPost, "/todo/1", nil)
 	response := httptest.NewRecorder()
 
 	r.ServeHTTP(response, request)
@@ -72,7 +71,8 @@ func TestGetTodoByID(t *testing.T) {
 
 func TestDeleteTodo(t *testing.T) {
 	r := SetUpRouter()
-	r.GET("/todo/1", DeleteTodo)
+	handler := Handler{}
+	r.GET("/todo/1", handler.DeleteTodo)
 	request := httptest.NewRequest(http.MethodPost, "/todo/1", nil)
 	response := httptest.NewRecorder()
 	r.ServeHTTP(response, request)
