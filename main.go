@@ -31,7 +31,7 @@ func (h *Handler) GetAllTodos(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &lists)
+	c.JSON(http.StatusAccepted, &lists)
 
 }
 
@@ -73,7 +73,7 @@ func (h *Handler) GetTodoByID(c *gin.Context) {
 			"Error ": "ID Not Found !!"})
 		return
 	}
-	c.JSON(http.StatusOK, list)
+	c.JSON(http.StatusAccepted, list)
 
 }
 
