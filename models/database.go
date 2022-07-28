@@ -8,6 +8,7 @@ import (
 type TodoList struct {
 	ID   string `json:"id"`
 	Task string `json:"task"`
+	Done bool   `json:"done"`
 }
 
 func ConnectDB() (*gorm.DB, error) {
