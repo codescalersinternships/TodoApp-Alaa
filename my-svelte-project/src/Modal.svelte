@@ -43,40 +43,11 @@ const deleteTodo = async (todo) => {
   getTodos()
 }
 
-
-// $:lists = []
-// axios.get(`http://localhost:8080/todo`).then(res => {
-//   lists = res.data;
-//   this.setState({lists});
-
-// })
-
-// let task =""
-
-// async function createTask(){
-//   const res = await fetch('http://localhost:8080/todo`',{
-//     method: 'POST',
-//     body: JSON.stringify({
-//       id,
-//       task,
-//       done: false
-
-//     })
-//   })
-
-//   const json = await res.json()
-//   result = JSON.stringify(json)
-//   lists.push(task)
-//   var node = document.createElement('li');
-//   node.appendChild(document.createTextNode('myUL'));
-//   document.querySelector('ul').appendChild(node);
-// }
-
-
 </script>
 
 <main>
   <h2>TODO APP</h2>
+  
   <form on:submit="{createTodo}">
     <input type="text" bind:value="{ID}" id="inputID">
     <input type="text" bind:value="{Task}" id="inputTask">
@@ -85,7 +56,7 @@ const deleteTodo = async (todo) => {
 
   <hr  style="color: #BC3CBC" >
   <hr  style="color: #BC3CBC" >
-  <!-- <h2>Todo List</h2> -->
+
   {#each todos as todo}
   <div>
     <h3>{todo.id} {todo.task}</h3>
@@ -95,52 +66,6 @@ const deleteTodo = async (todo) => {
 
 </main>
 
-<!-- <main>
-  <h1>The Todo App</h1>
-  <hr />
-  <h2>Create a Todo</h2>
-  <form on:submit="{createTodo}">
-    <input type="text" bind:value="{ID}" />
-    <input type="text" bind:value="{Task}" />
-    <input type="submit" value="Create Todo" />
-  </form>
-  <hr />
-  <h2>The Todos</h2>
-  {#each todos as todo}
-  <div>
-    <h2>{todo.id}</h2>
-    <h3>{todo.task}</h3>
-  </div>
-  {/each}
-</main> -->
-
-
-
-
-<!-- <div clas ="backdrop">
-    <dir class="modal">
-        <div id="myDIV" class="header">
-            <h2>My To Do List</h2>
-            <input type="text" id="myInput" placeholder="Title..." bind:value="{Task}">
-            <button id="Button" type="button" onclick="{createTodo()}"> Add</button>
-          </div>
-          
-          <ol id="myUL">
-           
-            {#each todos as todo }
-            <input type="checkbox" id="checkBox"> <li >{todo.task}</li> <span id="span">❌</span>
-            {/each}
-
-          </ol>
-    </dir>
-
-    <section>
-        <script>
-
-        </script>
-    </section>
-
-</div> -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
@@ -196,7 +121,6 @@ button, h3{
   display: inline-block;
 }
 
-/* Darker background on mouse-over */
 .btn:hover {
   background-color: rgb(255, 255, 255);
 }
