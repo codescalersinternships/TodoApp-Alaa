@@ -32,50 +32,38 @@ type ErrorMsg struct {
 
 func (app *App) GetAllTodos(c *gin.Context) {
 	var lists []model.TodoList
-
 	if result := app.db.Find(&lists); result.Error != nil {
 		r := ErrorMsg{"Error!!, Can't get all todos"}
 		c.JSON(http.StatusBadRequest, r)
 		return
 	}
-
 	c.JSON(http.StatusAccepted, &lists)
-
 }
 
 func (app *App) CreateTodo(c *gin.Context) {
 	var list model.TodoList
-
 	if err := c.BindJSON(&list); err != nil {
 		r := ErrorMsg{"Error!!"}
 		c.JSON(http.StatusBadRequest, r)
 		return
 	}
-
 	if result := app.db.Create(&list); result.Error != nil {
 		r := ErrorMsg{"Error!!, Can't create data"}
 		c.JSON(http.StatusBadRequest, r)
 		return
 	}
-
 	c.JSON(http.StatusCreated, &list)
-
 }
 
 func (app *App) DeleteTodo(c *gin.Context) {
-
 	id := c.Param("id")
-
 	if result := app.db.Delete(&model.TodoList{}, id); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"Error : ": result.Error.Error(),
 		})
-
 		return
 	}
-
 	c.Status(http.StatusOK)
-
 }
 
 func (app *App) GetTodoByID(c *gin.Context) {
@@ -86,7 +74,6 @@ func (app *App) GetTodoByID(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusAccepted, list)
-
 }
 
 func main() {

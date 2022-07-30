@@ -1,49 +1,136 @@
 <script>
-$:lists = []
-axios.get(`http://localhost:8080/todo`).then(res => {
-  lists = res.data;
-  this.setState({lists});
+import { onMount } from "svelte/internal";
 
+let todos = []
+const baseURL = "http://localhost:8080/todo"
+
+const getTodos = async () => {
+  const response = await fetch(baseURL)
+  const data = await response.json()
+  todos = await data
+}
+
+onMount(() => {
+  getTodos()
 })
 
-let task =""
 
-async function createTask(){
-  const res = await fetch('http://localhost:8080/todo`',{
-    method: 'POST',
+let Task
+let ID
+const createTodo = async event => {
+  event.preventDefault() 
+  await fetch(baseURL, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
-      id,
-      task,
-      done: false
-
-    })
+      id: ID,
+      task: Task,
+    }),
   })
 
-  const json = await res.json()
-  result = JSON.stringify(json)
-  lists.push(task)
-  var node = document.createElement('li');
-  node.appendChild(document.createTextNode('myUL'));
-  document.querySelector('ul').appendChild(node);
+  getTodos()
+  ID = ""
+  Task = ""
 }
+
+const deleteTodo = async (todo) => {
+  event.preventDefault()
+  await fetch(baseURL+"/"+todo.id,{
+    method: "delete",
+  })
+  getTodos()
+}
+
+
+// $:lists = []
+// axios.get(`http://localhost:8080/todo`).then(res => {
+//   lists = res.data;
+//   this.setState({lists});
+
+// })
+
+// let task =""
+
+// async function createTask(){
+//   const res = await fetch('http://localhost:8080/todo`',{
+//     method: 'POST',
+//     body: JSON.stringify({
+//       id,
+//       task,
+//       done: false
+
+//     })
+//   })
+
+//   const json = await res.json()
+//   result = JSON.stringify(json)
+//   lists.push(task)
+//   var node = document.createElement('li');
+//   node.appendChild(document.createTextNode('myUL'));
+//   document.querySelector('ul').appendChild(node);
+// }
 
 
 </script>
 
-<div clas ="backdrop">
+<main>
+  <h2>TODO APP</h2>
+  <form on:submit="{createTodo}">
+    <input type="text" bind:value="{ID}" id="inputID">
+    <input type="text" bind:value="{Task}" id="inputTask">
+    <input type="submit" value="Submit" />
+  </form>
+
+  <hr  style="color: #BC3CBC" >
+  <hr  style="color: #BC3CBC" >
+  <!-- <h2>Todo List</h2> -->
+  {#each todos as todo}
+  <div>
+    <h3>{todo.id} {todo.task}</h3>
+    <button class="btn" on:click={(e) => deleteTodo(todo)}><i calss="fa fa-trash">❌</i></button>
+  </div>
+  {/each}
+
+</main>
+
+<!-- <main>
+  <h1>The Todo App</h1>
+  <hr />
+  <h2>Create a Todo</h2>
+  <form on:submit="{createTodo}">
+    <input type="text" bind:value="{ID}" />
+    <input type="text" bind:value="{Task}" />
+    <input type="submit" value="Create Todo" />
+  </form>
+  <hr />
+  <h2>The Todos</h2>
+  {#each todos as todo}
+  <div>
+    <h2>{todo.id}</h2>
+    <h3>{todo.task}</h3>
+  </div>
+  {/each}
+</main> -->
+
+
+
+
+<!-- <div clas ="backdrop">
     <dir class="modal">
         <div id="myDIV" class="header">
             <h2>My To Do List</h2>
-            <input type="text" id="myInput" placeholder="Title...">
-            <button id="Button" type="button" onclick="createTask()"> Add</button>
+            <input type="text" id="myInput" placeholder="Title..." bind:value="{Task}">
+            <button id="Button" type="button" onclick="{createTodo()}"> Add</button>
           </div>
           
           <ol id="myUL">
            
-            {#each lists as list }
-            <input type="checkbox" id="checkBox"> <li >{list.id} {list.task}</li> <span id="span">❌</span>
-          
+            {#each todos as todo }
+            <input type="checkbox" id="checkBox"> <li >{todo.task}</li> <span id="span">❌</span>
             {/each}
+
           </ol>
     </dir>
 
@@ -53,102 +140,72 @@ async function createTask(){
         </script>
     </section>
 
-</div>
+</div> -->
 
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-    
-* {
-  box-sizing: border-box;
-}
 
-ul {
-  margin: 0;
-  padding: 0;
-}
+  input[type=text]{
+    margin: 8px 0;
+    border-radius: 20px;
 
-ul li:nth-child(odd) {
-  background: #f9f9f9;
-}
+  }
 
-/* Darker background-color on hover */
-ul li:hover {
-  background: #ddd;
-}
+  #inputID{
+    width: 8%;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    border: 1px solid rgb(212, 130, 212);
+  }
 
-.close {
+  #inputTask{
+    width: 50%;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    border: 1px solid rgb(212, 130, 212);
+  }
+
+  input[type=submit]{
+    background-color: rgb(243, 230, 230);
+    border: none;
+    color: purple;
+    padding: 16px 20px;
+    text-decoration: none;
+    margin: 4px 4px;
+    cursor: pointer;
+    border-radius: 25px;
+  }
+
+  h2{
+    color: purple;
+    font-size: 35px;
+    font-weight: 400;
+    background-image: linear-gradient(to left, #fdfdff, #d1bce5);
+  }
+
+  .btn {
+  background-color: white; 
+  border: none; 
+  color: white; 
+  padding: 12px 16px; 
+  font-size: 16px; 
   position: absolute;
-  right: 0;
-  top: 0;
-  padding: 12px 16px 12px 16px;
 }
 
-.close:hover {
-  background-color: #f44336;
-  color: white;
+button, h3{
+  display: inline-block;
 }
 
-.header {
-  background-color: #ca8c87;
-  padding: 30px 40px;
-  color: white;
-  text-align: center;
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: rgb(255, 255, 255);
 }
 
-.header:after {
-  content: "";
-  display: table;
-  clear: both;
+h3{
+  font-weight: bold; 
+  color: purple;
+  padding-right: 33px;
+  font-style: italic;
+  
 }
-
-input {
-  margin: 0;
-  border: none;
-  border-radius: 0;
-  width: 75%;
-  padding: 10px;
-  float: left;
-  font-size: 16px;
-}
-
-.addBtn {
-  padding: 10px;
-  width: 25%;
-  background: #d9d9d9;
-  color: rgb(128, 110, 110);
-  float: left;
-  text-align: center;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-  border-radius: 0;
-}
-
-li {
-    list-style: none;
-    padding: 10px 10px;
-    border-bottom: 2px solid rgb(105, 67, 67);
-  }
-
-  #checkBox{
-    position: absolute;
-    margin-top: 12px;
-  }
-
-  #span{
-    position: absolute;
-    left: 100px;
-    margin-top: -25px;
-  }
-
-  #Button{
-    display: inline-block;
-    font-size: 20px;
-    border-radius: 0px;
-    background-color: white;
-    width: 18%;
-    
-
-  }
-
 </style>

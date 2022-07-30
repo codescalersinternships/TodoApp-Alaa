@@ -23,3 +23,16 @@ func ConnectDB() (*gorm.DB, error) {
 
 	return db, err
 }
+
+// func getAllTodos()([]TodoList,error){
+// 	var lists[] TodoList
+// 	db *gorm.DB
+// 	if result := db.Find(&lists); result.Error != nil {
+// 		err := result.Error
+// 		return nil, err
+
+// 	}
+
+// 	//fmt.Println(lists)
+// 	return lists, nil
+// }
