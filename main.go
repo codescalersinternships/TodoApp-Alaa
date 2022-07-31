@@ -78,7 +78,13 @@ func(app *App)MarkCompleted(c *gin.Context){
 			"Error ": "ID Not Found !!"})
 		return
 	}
-	list.Done = true;
+	if list.Done == true {
+		list.Done = false
+	}else {
+		list.Done = true
+	}
+	
+	app.db.Save(&list)
 	c.JSON(http.StatusAccepted, list)
 
 }
