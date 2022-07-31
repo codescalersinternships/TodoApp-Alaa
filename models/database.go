@@ -24,15 +24,35 @@ func ConnectDB() (*gorm.DB, error) {
 	return db, err
 }
 
-// func getAllTodos()([]TodoList,error){
-// 	var lists[] TodoList
-// 	db *gorm.DB
-// 	if result := db.Find(&lists); result.Error != nil {
-// 		err := result.Error
-// 		return nil, err
+func GetAllTodosHandler()([]TodoList, error){
+	db, err := ConnectDB()
+	if err != nil{
+		return nil, err
+	}
+	var allTodos []TodoList
+	errr := db.Find(&allTodos).Error
+	return allTodos, errr
+}
 
+func (newTodo *TodoList)CreateTodoHandler()(*TodoList){
+	db, err := ConnectDB()
+	if err != nil{
+		return nil
+	}
+	db.Create(&newTodo)
+	return newTodo
+}
+
+// func DeleteTodoHandler(id int64)(TodoList, error){
+// 	var deletedTodo TodoList
+
+// 	db, err := ConnectDB()
+// 	if err != nil{
+// 		return _, err
 // 	}
-
-// 	//fmt.Println(lists)
-// 	return lists, nil
+// 	errr := db.Where("ID=?",id).Delete(&deletedTodo).Error
+// 	if (errr != nil){
+// 		return _, errr
+// 	}
+// 	return deletedTodo, nil
 // }

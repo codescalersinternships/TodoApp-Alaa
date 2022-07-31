@@ -31,31 +31,38 @@ type ErrorMsg struct {
 }
 
 func (app *App) GetAllTodos(c *gin.Context) {
-	var lists []model.TodoList
-	if result := app.db.Find(&lists); result.Error != nil {
+	lists , err:= model.GetAllTodosHandler()
+	if err!= nil{
 		r := ErrorMsg{"Error!!, Can't get all todos"}
 		c.JSON(http.StatusBadRequest, r)
-		return
 	}
 	c.JSON(http.StatusAccepted, &lists)
 }
 
-func (app *App) CreateTodo(c *gin.Context) {
-	var list model.TodoList
+func(app *App) CreateTodo(c *gin.Context) {
+	list :=  &model.TodoList{}
 	if err := c.BindJSON(&list); err != nil {
 		r := ErrorMsg{"Error!!"}
 		c.JSON(http.StatusBadRequest, r)
 		return
 	}
-	if result := app.db.Create(&list); result.Error != nil {
-		r := ErrorMsg{"Error!!, Can't create data"}
-		c.JSON(http.StatusBadRequest, r)
-		return
-	}
-	c.JSON(http.StatusCreated, &list)
+	todolist := list.CreateTodoHandler()
+	c.JSON(http.StatusCreated, &todolist)
 }
 
 func (app *App) DeleteTodo(c *gin.Context) {
+	// id := c.Param("id")
+	// // deletedList, err := model.DeleteTodoHandler(id)
+	// if err!= nil{
+	// 	r := ErrorMsg{"Error, can't delete task!!"}
+	// }
+	
+	// if result := app.db.Delete(&model.TodoList{}, id); result.Error != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"Error : ": result.Error.Error(),
+	// 	})
+	// 	return
+	// }
 	id := c.Param("id")
 	if result := app.db.Delete(&model.TodoList{}, id); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -64,6 +71,7 @@ func (app *App) DeleteTodo(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusOK)
+	
 }
 
 func (app *App) GetTodoByID(c *gin.Context) {
@@ -75,6 +83,19 @@ func (app *App) GetTodoByID(c *gin.Context) {
 	}
 	c.JSON(http.StatusAccepted, list)
 }
+
+func(app *App)MarkCompleted(c *gin.Context){
+	var list model.TodoList
+	if err := app.db.Where("id= ?", c.Param("id")).First(&list).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Error ": "ID Not Found !!"})
+		return
+	}
+	list.Done = true;
+	c.JSON(http.StatusAccepted, list)
+
+}
+
 
 func main() {
 	router := gin.New()
@@ -112,7 +133,9 @@ func main() {
 	router.GET("/todo/:id", app.GetTodoByID)
 	router.Use(middleware.GinBodyMiddleware())
 	router.DELETE("/todo/:id", app.DeleteTodo)
-	//router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.Use(middleware.GinBodyMiddleware())
+	router.PATCH("/todo/:id", app.MarkCompleted)
+	// router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.

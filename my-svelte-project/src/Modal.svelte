@@ -43,11 +43,20 @@ const deleteTodo = async (todo) => {
   getTodos()
 }
 
+const markTask = async (todo) => {
+  event.preventDefault()
+  await fetch(baseURL + "/"+todo.id,{
+    method: "patch",
+  })
+  getTodos()
+}
+
+
 </script>
 
 <main>
   <h2>TODO APP</h2>
-  
+
   <form on:submit="{createTodo}">
     <input type="text" bind:value="{ID}" id="inputID">
     <input type="text" bind:value="{Task}" id="inputTask">
@@ -59,6 +68,7 @@ const deleteTodo = async (todo) => {
 
   {#each todos as todo}
   <div>
+    <input type="checkbox" onclick={(e) => markTask(todo)}>
     <h3>{todo.id} {todo.task}</h3>
     <button class="btn" on:click={(e) => deleteTodo(todo)}><i calss="fa fa-trash">❌</i></button>
   </div>
@@ -126,10 +136,11 @@ button, h3{
 }
 
 h3{
-  font-weight: bold; 
+  font-weight: bold;
   color: purple;
   padding-right: 33px;
   font-style: italic;
+  margin-left: 9px;
   
 }
 </style>
