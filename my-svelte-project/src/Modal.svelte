@@ -58,9 +58,9 @@ const markTask = async (todo) => {
   <h2>TODO APP</h2>
 
   <form on:submit="{createTodo}">
-    <input type="text" bind:value="{ID}" id="inputID">
-    <input type="text" bind:value="{Task}" id="inputTask">
-    <input type="submit" value="Submit" />
+    <input type="text" bind:value="{ID}" id="inputID" name="ID">
+    <input type="text" bind:value="{Task}" id="inputTask" name="Task">
+    <input type="submit" value="Submit" class="button"/>
   </form>
 
   <hr  style="color: #BC3CBC" >
