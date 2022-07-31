@@ -48,7 +48,7 @@ const markTask = async (todo) => {
   await fetch(baseURL + "/"+todo.id,{
     method: "patch",
   })
-  getTodos()
+  // getTodos()
 }
 
 
@@ -68,7 +68,7 @@ const markTask = async (todo) => {
 
   {#each todos as todo}
   <div>
-    <input type="checkbox" onclick={(e) => markTask(todo)} bind:value="{todo.Done}">
+    <input type="checkbox" on:checked={(e) => markTask(todo)} bind:value="{todo.Done}">
     <h3>{todo.id} {todo.task}</h3>
     <button class="btn" on:click={(e) => deleteTodo(todo)}><i calss="fa fa-trash">❌</i></button>
   </div>

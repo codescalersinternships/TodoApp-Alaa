@@ -62,13 +62,13 @@ func (app *App) DeleteTodo(c *gin.Context) {
 }
 
 func (app *App) GetTodoByID(c *gin.Context) {
-	var list model.TodoList
-	if err := app.db.Where("id= ?", c.Param("id")).First(&list).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"Error ": "ID Not Found !!"})
-		return
+	id := c.Param("id")
+	task , err := model.GetTodoByIDHandler(id)
+	if err != nil{
+		c.JSON(http.StatusNotFound, gin.H{ "Error ": "ID Not Found !!"})
+		return	
 	}
-	c.JSON(http.StatusAccepted, list)
+	c.JSON(http.StatusAccepted, task)
 }
 
 func(app *App)MarkCompleted(c *gin.Context){
