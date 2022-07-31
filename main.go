@@ -51,27 +51,14 @@ func(app *App) CreateTodo(c *gin.Context) {
 }
 
 func (app *App) DeleteTodo(c *gin.Context) {
-	// id := c.Param("id")
-	// // deletedList, err := model.DeleteTodoHandler(id)
-	// if err!= nil{
-	// 	r := ErrorMsg{"Error, can't delete task!!"}
-	// }
-	
-	// if result := app.db.Delete(&model.TodoList{}, id); result.Error != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"Error : ": result.Error.Error(),
-	// 	})
-	// 	return
-	// }
 	id := c.Param("id")
-	if result := app.db.Delete(&model.TodoList{}, id); result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"Error : ": result.Error.Error(),
-		})
+	deletedList, err := model.DeleteTodoHandler(id)
+	if err != nil{
+		r := ErrorMsg{"Failed to delete"}
+		c.JSON(http.StatusInternalServerError, r)
 		return
 	}
-	c.Status(http.StatusOK)
-	
+	c.JSON(http.StatusOK, deletedList)
 }
 
 func (app *App) GetTodoByID(c *gin.Context) {

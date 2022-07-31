@@ -43,16 +43,16 @@ func (newTodo *TodoList)CreateTodoHandler()(*TodoList){
 	return newTodo
 }
 
-// func DeleteTodoHandler(id int64)(TodoList, error){
-// 	var deletedTodo TodoList
+func DeleteTodoHandler(id string)(TodoList, error){
+	deletedTodo := TodoList{}
 
-// 	db, err := ConnectDB()
-// 	if err != nil{
-// 		return _, err
-// 	}
-// 	errr := db.Where("ID=?",id).Delete(&deletedTodo).Error
-// 	if (errr != nil){
-// 		return _, errr
-// 	}
-// 	return deletedTodo, nil
-// }
+	db, err := ConnectDB()
+	if err != nil{
+		return deletedTodo, err
+	}
+
+	err2 := db.Where("ID = ?",id).Delete(&deletedTodo).Error
+	return deletedTodo, err2
+
+
+}
