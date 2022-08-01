@@ -70,7 +70,7 @@ const markTask = async (todo) => {
   <div>
     <input type="checkbox" on:change={(e) => markTask(todo)}>
     <h3>{todo.id} {todo.task}</h3>
-    <button class="btn" on:click={(e) => deleteTodo(todo)}><i calss="fa fa-trash">❌</i></button>
+    <button name="btn" class="btn" on:click={(e) => deleteTodo(todo)}><i calss="fa fa-trash">❌</i></button>
   </div>
   {/each}
 
