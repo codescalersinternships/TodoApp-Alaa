@@ -115,7 +115,7 @@ func main() {
 		}
 	}()
 
-	log.Println("Server exiting")
+	// log.Println("Server exiting")
 	app := newApp(db)
 	router.Use(middleware.GinBodyMiddleware())
 	router.GET("/todo", app.GetAllTodos)

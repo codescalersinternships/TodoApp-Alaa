@@ -2,16 +2,8 @@ FROM golang:latest
 
 WORKDIR /app
 
-COPY go.mod ./
+COPY . .
 
-COPY go.sum ./
-
-RUN go mod download
-
-COPY *.go ./
-
-RUN go build -o /swag-gin-demo
-
+RUN go build -o main .
 EXPOSE 8080
-
-CMD [ "/swag-gin-demo" ]
+CMD [ "./main" ]
