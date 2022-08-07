@@ -7,6 +7,11 @@ on:
     branches: [ "main" ]  
 
 jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: cypress run
 
   build:
 
