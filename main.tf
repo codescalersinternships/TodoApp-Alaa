@@ -1,27 +1,36 @@
 terraform {
   required_providers {
-    todo = {
-      source = "AlaaElattar/TodoApp/tree/review"
+    grid = {
+      source = "threefoldtech/grid"
     }
-
   }
 }
 
-provider "todo" {
-  host = "172.0.0.1"
-  port = "8080"
-  apipath = "/"
-  schema = "http"
-  
+provider "grid" {
 }
 
-resource "todo" "task1" {
-  index = 1
-  task = "Github Actions"
-  completed = false
-  
+resource "grid_network" "net1" {
+    nodes = [45]
+    ip_range = "10.1.0.0/16"
+    name = "network"
+    description = "newer network"
+    add_wg_access = true
 }
 
-
-
-
+resource "grid_deployment" "d1" {
+  node = 45
+  network_name = grid_network.net1.name
+  ip_range = lookup(grid_network.net1.nodes_ip_range, 8, "")
+  vms {
+    name = "vm1"
+    flist = "https://hub.grid.tf/alaa_mahmoud_1/image.flist"
+    cpu = 2 
+    publicip = true
+    memory = 1024
+    entrypoint = "/sbin/zinit init"
+    env_vars = {
+      SSH_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCtCuUUCZGLZ4NoihAiUK8K0kSoTR1WgIaLQKqMdQ/99eocMLqJgQMRIp8lueFG7SpcgXVRzln8KNKZX1Hm8lcrXICr3dnTW/0bpEnF4QOGLYZ/qTLF5WmoCgKyJ6WO96GjWJBsZPads+RD0WeiijV7jj29lALsMAI8CuOH0pcYUwWsRX/I1z2goMPNRY+PBjknMYFXEqizfUXqUnpzF3w/bKe8f3gcrmOm/Dxh1nHceJDW52TJL/sPcl6oWnHZ3fY4meTiAS5NZglyBF5oKD463GJnMt/rQ1gDNl8E4jSJUArN7GBJntTYxFoFo6zxB1OsSPr/7zLfPG420+9saBu9yN1O9DlSwn1ZX+Jg0k7VFbUpKObaCKRmkKfLiXJdxkKFH/+qBoCCnM5hfYxAKAyQ3YCCP/j9wJMBkbvE1QJMuuoeptNIvSQW6WgwBfKIK0shsmhK2TDdk0AHEnzxPSkVGV92jygSLeZ4ur/MZqWDx/b+gACj65M3Y7tzSpsR76M= omar@omar-Predator-PT315-52"
+    }
+    planetary = true
+  }
+}
