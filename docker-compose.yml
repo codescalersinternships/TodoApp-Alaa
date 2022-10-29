@@ -7,10 +7,16 @@ services:
     ports:
       - '8080:8080'
     restart: on-failure   
+    labels:
+      kompose.service.type: LoadBalancer
   frontend:
     build: ./frontend/Svelte
     image: f
     ports:
       - '5000:5000'
+    restart: on-failure  
+    labels:
+      kompose.service.type: LoadBalancer
     depends_on:
       - app    
+ 
